@@ -53,8 +53,12 @@ func testDB(client *edgedb.Client, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	startTime := time.Now()
-	client.QuerySingle(ctx, "SELECT 1", nil)
+	var result int64
+	err := client.QuerySingle(ctx, "SELECT 1", &result)
 	connectedElapsed := time.Since(startTime)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	if connectedElapsed > 1*time.Millisecond {
 		fmt.Printf("Connected had to reconnect (%v)\n", connectedElapsed)
